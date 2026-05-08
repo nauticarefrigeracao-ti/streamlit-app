@@ -1,0 +1,27 @@
+[theme]
+primaryColor          = "#BFA168"
+backgroundColor       = "#F1F1F1"
+secondaryBackgroundColor = "#FFFFFF"
+textColor             = "#14283C"
+font                  = "Inter, sans-serif"
+headingFont           = "Rajdhani, Inter, sans-serif"
+baseRadius            = "8px"
+
+[[theme.fontFaces]]
+family = "Inter"
+url    = "https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hjp-Ek-_EeA.woff2"
+weight = "400 700"
+style  = "normal"
+
+[[theme.fontFaces]]
+family = "Rajdhani"
+url    = "https://fonts.gstatic.com/s/rajdhani/v15/LDIxapCSOBg7S-QT7p4HM-assWac4Q.woff2"
+weight = "500 700"
+style  = "normal"
+
+[server]
+headless      = true
+enableCORS    = false
+
+[browser]
+gatherUsageStats = false

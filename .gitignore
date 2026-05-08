@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+.venv/
+venv/
+*.egg-info/
+
+# Dados locais — não commitar DB nem relatórios brutos
+data/*.db
+data/*.db-shm
+data/*.db-wal
+*.xlsx
+*.xls
+*.csv
+
+# Contexto / arquivos de trabalho local
+chat_com_o_gpt.txt
+explicacao_das_colunas.txt
+DISCOVERY.md
+Design System/
+*.code-workspace
+
+# Claude
+.claude/
+
+# Streamlit cache
+.streamlit/secrets.toml
