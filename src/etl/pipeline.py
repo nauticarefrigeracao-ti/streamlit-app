@@ -4,6 +4,7 @@ Orquestra: arquivo → DB.
 """
 
 import logging
+import sqlite3
 from datetime import datetime
 from pathlib import Path
 
@@ -73,7 +74,7 @@ def _upsert(df: pd.DataFrame) -> tuple[int, int]:
                     [row[c] for c in cols],
                 )
                 inserted += 1
-            except Exception:
+            except sqlite3.IntegrityError:
                 skipped += 1
         conn.commit()
 

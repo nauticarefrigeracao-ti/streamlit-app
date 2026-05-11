@@ -1,0 +1,10 @@
+[run]
+source = src
+omit =
+    src/db/backup.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+    except Exception:\s*$
+    except Exception:\s*pass

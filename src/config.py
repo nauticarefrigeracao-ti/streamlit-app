@@ -12,8 +12,8 @@ TAXA_IMPOSTO = 0.2559  # 25,59% sobre receita_total
 # --- Mapeamento de colunas do Excel/CSV ---
 # Chave: nome canônico interno | Valor: nome(s) possível(is) no arquivo fonte
 COLUMN_MAP = {
-    "produto":        ["PRODUTOS FULL", "produto"],
-    "sku":            ["SKU", "sku"],
+    "produto":        ["PRODUTOS FULL", "produto", "Produto"],
+    "sku":            ["SKU", "sku", "Código (SKU)", "Codigo (SKU)"],
     "receita_total":  ["Total", "total"],
     "frete":          ["Diferencial de frete", "diferencial de frete"],
     "comissao_ml":    ["Total comissão", "total comissão", "Total comissao"],

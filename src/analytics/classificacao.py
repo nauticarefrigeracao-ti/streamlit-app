@@ -36,6 +36,40 @@ STATUS_DESC = {
     "Problema":     "Margem negativa. Ação urgente — empresa perde dinheiro nesse produto.",
 }
 
+STATUS_TOOLTIP = {
+    "Estrela": (
+        "O melhor cenário possível: vende bem E tem margem saudável. "
+        "Esses produtos pagam as contas e geram lucro real. "
+        "Prioridade máxima: nunca deixe o estoque zerar — uma ruptura aqui é dinheiro direto no lixo. "
+        "Negocie volume com o fornecedor para defender ou melhorar a margem."
+    ),
+    "Volume Cego": (
+        "Esse produto fatura muito, mas boa parte do dinheiro some antes de chegar no caixa. "
+        "Alta receita com margem baixa significa que você está trabalhando muito para lucrar pouco. "
+        "Ação: revise o preço de venda ou negocie o custo com o fornecedor. "
+        "Uma melhora de 2–3 pontos percentuais na margem aqui tem grande impacto no lucro total."
+    ),
+    "Oportunidade": (
+        "Produto lucrativo que ainda não ganhou tração de vendas. "
+        "A margem está acima da média do portfólio — cada venda rende bem. "
+        "O problema é o volume baixo. "
+        "Ação: teste uma campanha, melhore o anúncio ou ofereça frete grátis. "
+        "Se o volume crescer, esse produto pode virar uma Estrela."
+    ),
+    "Parado": (
+        "Pouco volume e margem baixa — o pior dos dois mundos. "
+        "Esse produto ocupa capital de giro, espaço no estoque e atenção operacional sem retorno proporcional. "
+        "Avalie descontinuação: se não há perspectiva de melhora no volume ou na margem, "
+        "cortar esse produto libera recursos para os que realmente performam."
+    ),
+    "Problema": (
+        "Cada venda desse produto gera prejuízo — o custo total supera o que ele rende. "
+        "Manter no portfólio ativo significa pagar para vender. "
+        "Ação imediata: suspender anúncios, revisar precificação ou descontinuar. "
+        "Quanto mais vender, mais dinheiro perde. Não existe volume que resolva margem negativa."
+    ),
+}
+
 
 def classificar(df: pd.DataFrame) -> pd.DataFrame:
     """Adiciona coluna 'status' ao DataFrame de vendas."""

@@ -12,8 +12,10 @@ import pandas as pd
 def load_file(path: str | Path) -> pd.DataFrame:
     """Lê CSV ou Excel e retorna DataFrame com colunas originais."""
     p = Path(path)
-    if p.suffix.lower() in (".xlsx", ".xls"):
+    if p.suffix.lower() == ".xlsx":
         df = pd.read_excel(p, dtype=str)
+    elif p.suffix.lower() == ".xls":
+        df = pd.read_excel(p, dtype=str, engine="calamine")
     elif p.suffix.lower() == ".csv":
         df = _read_csv(p)
     else:

@@ -25,8 +25,9 @@ def clean(df: pd.DataFrame) -> pd.DataFrame:
 def _rename_columns(df: pd.DataFrame) -> pd.DataFrame:
     rename = {}
     for canonical, candidates in COLUMN_MAP.items():
+        candidates_lower = [c.lower() for c in candidates]
         for col in df.columns:
-            if col.strip() in candidates:
+            if col.strip().lower() in candidates_lower:
                 rename[col] = canonical
                 break
     missing = [c for c in COLUMN_MAP if c not in rename.values()]

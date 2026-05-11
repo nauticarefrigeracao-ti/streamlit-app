@@ -1,13 +1,12 @@
 """Curva ABC — múltiplas perspectivas: faturamento, lucro e custo."""
 
-from io import BytesIO
-
 import plotly.express as px
 import streamlit as st
 
 from ntc_theme import data_table
 from src.analytics.abc import calcular_abc, resumo_abc
 from src.analytics.kpis import get_vendas
+from src.utils.excel_export import to_excel_styled
 
 _NAVY  = "#14283C"
 _GREEN = "#1F7A3A"
@@ -39,6 +38,26 @@ _DESCRICOES = {
     "A": "Poucos produtos, grande impacto. Prioridade máxima: estoque, negociação, campanhas.",
     "B": "Produtos intermediários. Monitorar crescimento — podem migrar para A ou cair para C.",
     "C": "Longa cauda. Avaliar custo de manutenção vs. contribuição marginal.",
+}
+
+_TOOLTIPS_ABC = {
+    "A": (
+        "Esses produtos são o coração do negócio — concentram 80% do resultado. "
+        "Nunca deixe o estoque zerar: uma ruptura aqui impacta diretamente o faturamento. "
+        "Priorize negociação de custo com fornecedores desses itens e monitore a margem todo mês. "
+        "Uma queda de margem num produto Classe A afeta o negócio inteiro."
+    ),
+    "B": (
+        "Produtos com potencial — podem crescer para Classe A ou regredir para C. "
+        "Identifique os de maior margem: uma campanha ou melhoria de anúncio pode transformá-los em Estrela. "
+        "Fique atento aos que estão caindo de volume — podem estar perdendo relevância no mercado."
+    ),
+    "C": (
+        "São muitos produtos mas representam apenas 5% do faturamento. "
+        "Cada um ocupa capital de giro e atenção operacional. "
+        "Avalie: os de boa margem valem o esforço. Os de margem baixa são candidatos a corte — "
+        "manter produto C com margem ruim custa mais do que rende."
+    ),
 }
 
 _COLS_ABC = [
@@ -93,6 +112,7 @@ def render(periodo: str, filtro_sku: str = "") -> None:
     c1, c2, c3 = st.columns(3)
     for col, (_, row) in zip([c1, c2, c3], res.iterrows()):
         cor = ABC_COLORS[row["abc"]]
+        tip = _TOOLTIPS_ABC[row["abc"]]
         with col:
             st.markdown(
                 f"""
@@ -103,6 +123,9 @@ def render(periodo: str, filtro_sku: str = "") -> None:
                   <p style="color:#525252;font-size:0.70rem;letter-spacing:0.08em;
                              text-transform:uppercase;font-weight:600;margin:0 0 0.3rem">
                     {_LABELS[row['abc']]}
+                    <span style="color:#9BACBD;font-size:11px;font-style:normal;
+                                 cursor:help;font-weight:400;"
+                          title="{tip}">ⓘ</span>
                   </p>
                   <p style="font-family:'Rajdhani',sans-serif;font-weight:700;
                              font-size:1.65rem;color:{_NAVY};margin:0 0 0.15rem">
@@ -238,11 +261,20 @@ def _nota_filtro(filtro: str, n_fil: int, n_tot: int) -> None:
         st.caption(f"Filtro global ativo: **'{filtro}'** — {n_fil} de {n_tot} produtos.")
 
 
+_ABC_COLS_EXCEL = [
+    {"key": "abc",           "label": "Classe",             "fmt": "text",    "width": 9,  "total": False},
+    {"key": "sku",           "label": "SKU",                "fmt": "text",    "width": 13},
+    {"key": "produto",       "label": "Produto",            "fmt": "text",    "width": 42},
+    {"key": "receita_total", "label": "Receita Bruta (R$)", "fmt": "brl"},
+    {"key": "custo_produto", "label": "Custo Produto (R$)", "fmt": "brl"},
+    {"key": "total_liquido", "label": "Total Líquido (R$)", "fmt": "brl"},
+    {"key": "margem",        "label": "Margem %",           "fmt": "pct"},
+    {"key": "perc_acumulado","label": "% Acumulado",        "fmt": "pct",     "total": False},
+]
+
+
 def _to_excel(df) -> bytes:
-    buf = BytesIO()
-    with __import__("pandas").ExcelWriter(buf, engine="openpyxl") as writer:
-        df.to_excel(writer, sheet_name="Curva ABC", index=False)
-    return buf.getvalue()
+    return to_excel_styled(df, _ABC_COLS_EXCEL, sheet_name="Curva ABC")
 
 
 def _brl(v) -> str:

@@ -1,13 +1,13 @@
 """Classificação de produtos — scatter matrix + box plot + cards + tabelas por status."""
 
-from io import BytesIO
-
 import plotly.express as px
 import streamlit as st
 
 from ntc_theme import data_table
+from src.utils.excel_export import to_excel_styled
 from src.analytics.classificacao import (
-    STATUS_COLORS, STATUS_DESC, STATUS_ICONS, classificar, resumo_classificacao,
+    STATUS_COLORS, STATUS_DESC, STATUS_ICONS, STATUS_TOOLTIP,
+    classificar, resumo_classificacao,
 )
 from src.analytics.kpis import get_vendas
 
@@ -159,6 +159,7 @@ def render(periodo: str, filtro_sku: str = "") -> None:
         row = res_indexed.loc[status]
         cor  = STATUS_COLORS[status]
         icon = STATUS_ICONS[status]
+        tip  = STATUS_TOOLTIP[status]
         with col:
             st.markdown(
                 f"""
@@ -169,6 +170,9 @@ def render(periodo: str, filtro_sku: str = "") -> None:
                   <p style="color:#525252;font-size:0.68rem;letter-spacing:0.08em;
                              text-transform:uppercase;font-weight:600;margin:0 0 0.25rem">
                     {icon} {status}
+                    <span style="color:#9BACBD;font-size:11px;font-style:normal;
+                                 cursor:help;font-weight:400;"
+                          title="{tip}">ⓘ</span>
                   </p>
                   <p style="font-family:'Rajdhani',sans-serif;font-weight:700;
                              font-size:1.50rem;color:{_NAVY};margin:0 0 0.1rem">
@@ -245,11 +249,18 @@ def _nota_filtro(filtro: str, n_fil: int, n_tot: int) -> None:
         st.caption(f"Filtro global ativo: **'{filtro}'** — {n_fil} de {n_tot} produtos.")
 
 
+_CLASS_COLS_EXCEL = [
+    {"key": "sku",           "label": "SKU",                "fmt": "text", "width": 13},
+    {"key": "produto",       "label": "Produto",            "fmt": "text", "width": 42},
+    {"key": "receita_total", "label": "Receita Bruta (R$)", "fmt": "brl"},
+    {"key": "total_liquido", "label": "Total Líquido (R$)", "fmt": "brl"},
+    {"key": "custo_produto", "label": "Custo Produto (R$)", "fmt": "brl"},
+    {"key": "margem",        "label": "Margem %",           "fmt": "pct"},
+]
+
+
 def _to_excel(df, sheet_name: str) -> bytes:
-    buf = BytesIO()
-    with __import__("pandas").ExcelWriter(buf, engine="openpyxl") as writer:
-        df.to_excel(writer, sheet_name=sheet_name[:31], index=False)
-    return buf.getvalue()
+    return to_excel_styled(df, _CLASS_COLS_EXCEL, sheet_name=sheet_name[:31])
 
 
 def _brl(v) -> str:

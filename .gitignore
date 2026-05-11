@@ -27,3 +27,14 @@ Design System/
 
 # Streamlit cache
 .streamlit/secrets.toml
+
+# Launcher setup cache (gerado pelo Iniciar.bat)
+_setup/
+
+# Arquivo de auditoria (desenvolvimento)
+audit_system.py
+
+# Coverage (gerado por pytest)
+.coverage
+coverage.json
+coverage.xml

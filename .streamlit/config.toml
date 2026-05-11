@@ -20,8 +20,9 @@ weight = "500 700"
 style  = "normal"
 
 [server]
-headless      = true
-enableCORS    = false
+headless               = true
+enableCORS             = false
+enableXsrfProtection   = false
 
 [browser]
 gatherUsageStats = false

@@ -1,7 +1,5 @@
 """Visão Geral — KPIs, composição de custos, top produtos, tabela completa."""
 
-from io import BytesIO
-
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
@@ -9,6 +7,7 @@ import streamlit as st
 from ntc_theme import data_table
 from src.analytics.classificacao import STATUS_DESC, classificar
 from src.analytics.kpis import get_composicao_custos, get_kpis, get_vendas
+from src.utils.excel_export import to_excel_styled
 
 _NAVY  = "#14283C"
 _GOLD  = "#BFA168"
@@ -93,16 +92,20 @@ def render(periodo: str, filtro_sku: str = "") -> None:
     n_prej       = int((df_all["margem"] < 0).sum())
 
     c1, c2, c3, c4, c5, c6 = st.columns(6)
-    c1.metric("Faturamento Bruto",  _brl(fat_bruto))
-    c2.metric("Total Líquido",      _brl(fat_liquido))
-    c3.metric("Margem Global",      _pct(margem_g),
-              help="Total Líquido ÷ Faturamento Bruto (margem ponderada pelo volume)")
-    c4.metric("Margem Média",       _pct(margem_media),
-              help="Média aritmética das margens individuais de cada SKU")
-    c5.metric("SKUs no período",    str(n_skus))
-    c6.metric("SKUs com prejuízo",  str(n_prej),
+    c1.metric("Faturamento Bruto", _brl(fat_bruto),
+              help="Soma de todas as receitas do período, antes de descontar qualquer custo.")
+    c2.metric("Total Líquido", _brl(fat_liquido),
+              help="O que sobra no caixa após pagar imposto, frete, comissão do Mercado Livre e custo dos produtos. É o lucro real do período.")
+    c3.metric("Margem Global", _pct(margem_g),
+              help="Percentual do faturamento total que virou lucro. Produtos que mais faturam pesam mais neste número. Use para avaliar a saúde geral do negócio.")
+    c4.metric("Margem Média", _pct(margem_media),
+              help="Média simples da margem de cada produto, sem considerar quanto cada um faturou. Um produto pequeno com margem alta puxa este número para cima sem impacto real no caixa. Compare sempre com a Margem Global.")
+    c5.metric("SKUs no período", str(n_skus),
+              help="Quantidade de produtos diferentes com vendas registradas neste mês.")
+    c6.metric("SKUs com prejuízo", str(n_prej),
               delta=f"−{n_prej}" if n_prej else None,
-              delta_color="inverse")
+              delta_color="inverse",
+              help="Produtos que custaram mais do que renderam — custo + frete + comissão + imposto superou a receita. Cada um está tirando dinheiro do negócio.")
 
     st.divider()
 
@@ -390,11 +393,23 @@ def _section_title(texto: str, cor: str, subtitle: str = "") -> None:
     )
 
 
+_DASHBOARD_COLS_EXCEL = [
+    {"key": "status",        "label": "Status",               "fmt": "text",    "width": 14, "total": False},
+    {"key": "sku",           "label": "SKU",                  "fmt": "text",    "width": 13},
+    {"key": "produto",       "label": "Produto",              "fmt": "text",    "width": 44},
+    {"key": "receita_total", "label": "Receita Bruta (R$)",   "fmt": "brl"},
+    {"key": "total_liquido", "label": "Total Líquido (R$)",   "fmt": "brl"},
+    {"key": "margem",        "label": "Margem %",             "fmt": "pct"},
+    {"key": "margem_media",  "label": "Margem Histórica %",   "fmt": "pct",     "total": False},
+    {"key": "frete",         "label": "Frete (R$)",           "fmt": "brl"},
+    {"key": "comissao_ml",   "label": "Comissão ML (R$)",     "fmt": "brl"},
+    {"key": "imposto",       "label": "Imposto (R$)",         "fmt": "brl"},
+    {"key": "custo_produto", "label": "Custo Produto (R$)",   "fmt": "brl"},
+]
+
+
 def _to_excel(df) -> bytes:
-    buf = BytesIO()
-    with __import__("pandas").ExcelWriter(buf, engine="openpyxl") as writer:
-        df.to_excel(writer, sheet_name="Visão Geral", index=False)
-    return buf.getvalue()
+    return to_excel_styled(df, _DASHBOARD_COLS_EXCEL, sheet_name="Visão Geral")
 
 
 def _brl(v) -> str:

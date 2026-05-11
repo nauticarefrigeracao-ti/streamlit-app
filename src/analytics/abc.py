@@ -28,14 +28,11 @@ def calcular_abc(df: pd.DataFrame, coluna: str = "receita_total") -> pd.DataFram
 
     df["perc_acumulado"] = df[coluna].cumsum() / total
 
-    def _classe(p: float) -> str:
-        if p <= 0.80:
-            return "A"
-        if p <= 0.95:
-            return "B"
-        return "C"
-
-    df["abc"] = df["perc_acumulado"].apply(_classe)
+    # Classify by cumsum *before* this product is added (shift by 1).
+    # This ensures the product that crosses the 80% threshold is still class A,
+    # not B — and a single-product portfolio is always A, never C.
+    prev = df["perc_acumulado"].shift(1).fillna(0.0)
+    df["abc"] = prev.apply(lambda p: "A" if p < 0.80 else ("B" if p < 0.95 else "C"))
     return df
 
 

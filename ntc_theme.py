@@ -117,6 +117,11 @@ h3 {{ font-weight: 600; }}
   color: {Color.GOLD} !important;
   font-weight: 600;
 }}
+/* Inputs e selects na sidebar: texto escuro sobre fundo claro */
+[data-testid="stSidebar"] [data-baseweb="input"] *,
+[data-testid="stSidebar"] [data-baseweb="select"] * {{
+  color: {Color.NAVY} !important;
+}}
 
 /* -------- Botões --------------------------------------------------------- */
 .stButton > button,
@@ -429,7 +434,7 @@ def data_table(df, columns: list[dict], height: int = 480, footer: dict | None =
         if tip:
             title_attr = f' title="{_h.escape(tip)}"'
             cursor_style = "cursor:help;"
-            icon = (' <span style="color:#9BACBD;font-size:9px;'
+            icon = (' <span style="color:#9BACBD;font-size:11px;'
                     'vertical-align:middle;font-weight:400;">ⓘ</span>')
         else:
             title_attr = ""

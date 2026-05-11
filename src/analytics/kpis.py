@@ -144,6 +144,20 @@ def get_serie_temporal() -> "pd.DataFrame":
     return df
 
 
+def get_timeline_produtos() -> pd.DataFrame:
+    """Todos os SKUs × todos os períodos — para a tabela evolutiva."""
+    with get_connection() as conn:
+        df = pd.read_sql_query(
+            """
+            SELECT sku, produto, data_referencia, receita_total, total_liquido, margem
+            FROM fato_vendas
+            ORDER BY sku, data_referencia
+            """,
+            conn,
+        )
+    return df
+
+
 def get_margem_por_periodo(top_n: int = 25) -> "pd.DataFrame":
     """Margem dos top N SKUs (por receita acumulada) × todos os períodos."""
     with get_connection() as conn:
