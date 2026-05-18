@@ -278,29 +278,23 @@ def _render_header() -> None:
     b64, mime = _logo_b64()
     logo_tag = (
         f"<img src='data:image/{mime};base64,{b64}' "
-        f"style='width:2cm;height:2cm;object-fit:contain;flex-shrink:0;' alt='NTC'>"
+        f"style='width:76px;height:auto;display:block;flex-shrink:0;' alt='NTC'>"
         if b64 else ""
     )
     st.markdown(
-        f"""
-        <div style="background:#14283C;border-radius:12px;border-bottom:4px solid #BFA168;
-                    padding:1.25rem 1.75rem;margin-bottom:1rem;
-                    box-shadow:0 4px 8px rgba(20,40,60,0.10);
-                    display:flex;align-items:center;gap:1.25rem;">
-          {logo_tag}
-          <div>
-            <div style="font-family:'Rajdhani',Inter,sans-serif;font-size:1.75rem;
-                        font-weight:700;color:#fff;letter-spacing:0.04em;
-                        text-transform:uppercase;line-height:1.1;margin:0;">
-              Análise de Margem e Faturamento
-            </div>
-            <div style="color:#BFA168;font-size:0.8rem;font-weight:500;
-                        letter-spacing:0.06em;text-transform:uppercase;margin-top:4px;">
-              Grupo Náutica Refrigeração
-            </div>
-          </div>
-        </div>
-        """,
+        f"<div style='background:#14283C;border-radius:12px;border-bottom:4px solid #BFA168;"
+        f"padding:1.25rem 1.75rem;margin-bottom:1.25rem;"
+        f"box-shadow:0 4px 8px rgba(20,40,60,0.10);display:flex;align-items:center;gap:1.25rem;'>"
+        f"{logo_tag}"
+        f"<div>"
+        f"<div style='font-family:Rajdhani,Inter,\"Segoe UI\",sans-serif;font-size:1.75rem;"
+        f"font-weight:700;color:#fff;letter-spacing:0.04em;"
+        f"text-transform:uppercase;line-height:1.1;margin:0;'>"
+        f"Análise de Margem e Faturamento</div>"
+        f"<div style='color:#BFA168;font-size:0.8rem;font-weight:500;"
+        f"letter-spacing:0.06em;text-transform:uppercase;margin-top:4px;'>"
+        f"Grupo Náutica Refrigeração</div>"
+        f"</div></div>",
         unsafe_allow_html=True,
     )
 
@@ -436,43 +430,14 @@ else:
         comparativo.render(periodo, periodos, filtro_sku)
 
 # ── Footer fixo (mesmo padrão devolucoes/expedicao) ──────────────────────────
-import streamlit.components.v1 as _comp_footer
 from datetime import datetime as _dt
-_ft_text = f"Grupo N\\u00e1utica Refrigera\\u00e7\\u00e3o  \\u00a9  {_dt.now().year}"
-_ft_js = (
-    "(function(){"
-    "var win=window.parent||window;"
-    "var doc=win.document;"
-    "var id='ntc-fixed-footer';"
-    "if(doc.getElementById(id))return;"
-    "var el=doc.createElement('div');"
-    "el.id=id;"
-    "el.style.cssText='position:fixed;bottom:0;left:0;right:0;"
-    "background:#14283C;border-top:3px solid #BFA168;"
-    "padding:0.6rem 1.75rem;text-align:center;"
-    "z-index:99999;box-sizing:border-box';"
-    f"el.innerHTML='<span style=\"font-family:Rajdhani,Inter,sans-serif;"
-    "font-weight:600;font-size:0.82rem;color:rgba(155,172,189,.80);"
-    f"letter-spacing:.08em;text-transform:uppercase;\">{_ft_text}</span>';"
-    "doc.body.appendChild(el);"
-    "function applyPad(){"
-    "var h=el.getBoundingClientRect().height||44;"
-    "var pad=Math.ceil(h)+8+'px';"
-    "var bc=doc.querySelector('[data-testid=\"stMainBlockContainer\"]')||doc.querySelector('.block-container');"
-    "if(bc)bc.style.setProperty('padding-bottom',pad,'important');}"
-    "function ub(){"
-    "var sb=doc.querySelector('[data-testid=\"stSidebar\"]');"
-    "el.style.left=(sb?sb.getBoundingClientRect().width:0)+'px';"
-    "applyPad();}"
-    "function attachSbObserver(){"
-    "var sb2=doc.querySelector('[data-testid=\"stSidebar\"]');"
-    "if(sb2&&win.ResizeObserver){new win.ResizeObserver(ub).observe(sb2);return true;}"
-    "return false;}"
-    "ub();"
-    "if(!attachSbObserver()){"
-    "var tries=0;var t=setInterval(function(){"
-    "if(attachSbObserver()||++tries>20)clearInterval(t);ub();},250);}"
-    "win.addEventListener('resize',ub);"
-    "})();"
+st.markdown(
+    f'<div style="background:#14283C;border-top:3px solid #BFA168;'
+    f'margin-top:3rem;padding:0.6rem 1.75rem;text-align:center;">'
+    f'<span style="font-family:Rajdhani,Inter,\'Segoe UI\',sans-serif;'
+    f'font-weight:600;font-size:0.82rem;color:rgba(155,172,189,.80);'
+    f'letter-spacing:.08em;text-transform:uppercase;">'
+    f'Grupo Náutica Refrigeração  ©  {_dt.now().year}'
+    f'</span></div>',
+    unsafe_allow_html=True,
 )
-_comp_footer.html(f"<script>{_ft_js}</script>", height=0)
