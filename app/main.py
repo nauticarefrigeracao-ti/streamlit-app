@@ -435,24 +435,44 @@ else:
     with tab4:
         comparativo.render(periodo, periodos, filtro_sku)
 
-# ── Footer ────────────────────────────────────────────────────────────────────
+# ── Footer fixo (mesmo padrão devolucoes/expedicao) ──────────────────────────
+import streamlit.components.v1 as _comp_footer
 from datetime import datetime as _dt
-st.markdown(
-    f"""
-    <div style="
-        background: #14283C;
-        border-top: 3px solid #BFA168;
-        margin-top: 3rem;
-        margin-left: calc(-1.4rem - 1px);
-        margin-right: calc(-1.4rem - 1px);
-        padding: 0.6rem 1.75rem;
-        text-align: center;
-    ">
-      <span style="font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.82rem;
-                   color:rgba(155,172,189,0.80);letter-spacing:0.08em;text-transform:uppercase;">
-        Grupo Náutica Refrigeração &nbsp;©&nbsp; {_dt.now().year}
-      </span>
-    </div>
-    """,
-    unsafe_allow_html=True,
+_ft_text = f"Grupo N\\u00e1utica Refrigera\\u00e7\\u00e3o  \\u00a9  {_dt.now().year}"
+_ft_js = (
+    "(function(){"
+    "var win=window.parent||window;"
+    "var doc=win.document;"
+    "var id='ntc-fixed-footer';"
+    "if(doc.getElementById(id))return;"
+    "var el=doc.createElement('div');"
+    "el.id=id;"
+    "el.style.cssText='position:fixed;bottom:0;left:0;right:0;"
+    "background:#14283C;border-top:3px solid #BFA168;"
+    "padding:0.6rem 1.75rem;text-align:center;"
+    "z-index:99999;box-sizing:border-box';"
+    f"el.innerHTML='<span style=\"font-family:Rajdhani,Inter,sans-serif;"
+    "font-weight:600;font-size:0.82rem;color:rgba(155,172,189,.80);"
+    f"letter-spacing:.08em;text-transform:uppercase;\">{_ft_text}</span>';"
+    "doc.body.appendChild(el);"
+    "function applyPad(){"
+    "var h=el.getBoundingClientRect().height||44;"
+    "var pad=Math.ceil(h)+8+'px';"
+    "var bc=doc.querySelector('[data-testid=\"stMainBlockContainer\"]')||doc.querySelector('.block-container');"
+    "if(bc)bc.style.setProperty('padding-bottom',pad,'important');}"
+    "function ub(){"
+    "var sb=doc.querySelector('[data-testid=\"stSidebar\"]');"
+    "el.style.left=(sb?sb.getBoundingClientRect().width:0)+'px';"
+    "applyPad();}"
+    "function attachSbObserver(){"
+    "var sb2=doc.querySelector('[data-testid=\"stSidebar\"]');"
+    "if(sb2&&win.ResizeObserver){new win.ResizeObserver(ub).observe(sb2);return true;}"
+    "return false;}"
+    "ub();"
+    "if(!attachSbObserver()){"
+    "var tries=0;var t=setInterval(function(){"
+    "if(attachSbObserver()||++tries>20)clearInterval(t);ub();},250);}"
+    "win.addEventListener('resize',ub);"
+    "})();"
 )
+_comp_footer.html(f"<script>{_ft_js}</script>", height=0)
